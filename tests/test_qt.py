@@ -14,7 +14,11 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import pytest
 
-pytest.importorskip("PyQt6", reason="GUI extra not installed")
+# QtMultimedia is the piece with system library dependencies (PulseAudio,
+# ALSA); importing PyQt6 alone succeeds without them, so guard on the real
+# requirement. CI verifies this import separately and fails rather than
+# skipping, so a missing library can never pass silently.
+pytest.importorskip("PyQt6.QtMultimedia", reason="Qt multimedia unavailable")
 
 from PyQt6.QtWidgets import QApplication  # noqa: E402
 
